@@ -1,7 +1,12 @@
-FROM python:alpine
+FROM dart:stable AS build
 
 WORKDIR /app
+COPY pubspec.* ./
+RUN dart pub get
 
 COPY . .
+RUN dart pub get --offline
 
-CMD ["python","main.py"]
+EXPOSE 8085
+
+CMD ["/bin/sh", "-c", " dart run conduit db upgrade && dart bin/main.dart"]
